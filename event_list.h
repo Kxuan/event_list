@@ -66,10 +66,12 @@ void el_##el_name##_detach(                             \
     free(node);                                         \
 }
 #define EVENT_LIST_FIRE(el, ...) {                      \
-    typeof((el)->first) node = (el)->first;             \
-    while(node) {                                       \
-        node->callback(node->data, __VA_ARGS__);        \
-        node = node->next;                              \
+    typeof((el)->first) node = (el)->first, next;       \
+    if (node) {                                         \
+        do {                                            \
+            next = node->next;                          \
+            node->callback(node->data, __VA_ARGS__);    \
+        } while(next);                                  \
     }                                                   \
 }
 
