@@ -70,11 +70,24 @@ void el_##el_name##_detach(                             \
     if (node) {                                         \
         do {                                            \
             next = node->next;                          \
-            node->callback(node->data, __VA_ARGS__);    \
+            if (node->callback)                         \
+                node->callback(node->data, __VA_ARGS__);\
+            node = next;                                \
         } while(next);                                  \
     }                                                   \
 }
 
+#define EVENT_LIST_CALL(el) {                           \
+    typeof((el)->first) node = (el)->first, next;       \
+    if (node) {                                         \
+        do {                                            \
+            next = node->next;                          \
+            if (node->callback)                         \
+                node->callback(node->data);             \
+            node = next;                                \
+        } while(next);                                  \
+    }                                                   \
+}
 #define EVENT_LIST_INIT(name) {(name), NULL, NULL}
 
 
