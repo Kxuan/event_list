@@ -7,6 +7,16 @@
 
 #include <malloc.h>
 
+#define EVENT_LIST_FUNCTION_MODIFIERS_DEFAULT
+#ifndef EVENT_LIST_FUNCTION_MODIFIERS
+#define EVENT_LIST_FUNCTION_MODIFIERS EVENT_LIST_FUNCTION_MODIFIERS_DEFAULT
+#endif
+#define EVENT_LIST_FUNCTION_ATTRIBUTES_DEFAULT
+#ifndef EVENT_LIST_FUNCTION_ATTRIBUTES
+#define EVENT_LIST_FUNCTION_ATTRIBUTES EVENT_LIST_FUNCTION_ATTRIBUTES_DEFAULT
+#endif
+
+
 #define EVENT_LIST_PROTO(el_name, callback_t)           \
 struct event_list_##el_name##_s;                        \
 typedef callback_t event_list_##el_name##_cb;           \
@@ -21,15 +31,21 @@ typedef struct event_list_##el_name##_s {               \
     event_list_node_##el_name##_t *first;               \
     event_list_node_##el_name##_t *last;                \
 } event_list_##el_name##_t;                             \
-event_list_node_##el_name##_t *el_##el_name##_attach(   \
+EVENT_LIST_FUNCTION_MODIFIERS                           \
+event_list_node_##el_name##_t *el_##el_name##_attach    \
+EVENT_LIST_FUNCTION_ATTRIBUTES(                         \
         event_list_##el_name##_t *list,                 \
         event_list_##el_name##_cb callback,             \
         void *data);                                    \
-void el_##el_name##_detach(                             \
+EVENT_LIST_FUNCTION_MODIFIERS                           \
+void el_##el_name##_detach                              \
+EVENT_LIST_FUNCTION_ATTRIBUTES(                         \
         event_list_node_##el_name##_t *list);
 
 #define EVENT_LIST_DEFINE(el_name)                      \
-event_list_node_##el_name##_t *el_##el_name##_attach(   \
+EVENT_LIST_FUNCTION_MODIFIERS                           \
+event_list_node_##el_name##_t *el_##el_name##_attach    \
+EVENT_LIST_FUNCTION_ATTRIBUTES(                         \
         event_list_##el_name##_t *list,                 \
         event_list_##el_name##_cb callback,             \
         void *data) {                                   \
@@ -52,8 +68,12 @@ event_list_node_##el_name##_t *el_##el_name##_attach(   \
                                                         \
     return node;                                        \
 }                                                       \
-void el_##el_name##_detach(                             \
+EVENT_LIST_FUNCTION_MODIFIERS                           \
+void el_##el_name##_detach                              \
+EVENT_LIST_FUNCTION_ATTRIBUTES(                         \
         event_list_node_##el_name##_t *node) {          \
+    if (!node)                                          \
+        return;                                         \
     if (!node->prev)                                    \
         node->el->first = node->next;                   \
     else                                                \
@@ -64,6 +84,14 @@ void el_##el_name##_detach(                             \
         node->next->prev = node->prev;                  \
                                                         \
     free(node);                                         \
+}                                                       \
+EVENT_LIST_FUNCTION_MODIFIERS                           \
+void el_##el_name##_clear                               \
+EVENT_LIST_FUNCTION_ATTRIBUTES(                         \
+        event_list_##el_name##_t *list) {               \
+    while (list->first) {                               \
+        el_##el_name##_detach(list->first);             \
+    }                                                   \
 }
 #define EVENT_LIST_FIRE(el, ...) {                      \
     typeof((el)->first) node = (el)->first, next;       \
