@@ -32,20 +32,22 @@ typedef struct event_list_##el_name##_s {               \
     event_list_node_##el_name##_t *last;                \
 } event_list_##el_name##_t;                             \
 EVENT_LIST_FUNCTION_MODIFIERS                           \
-event_list_node_##el_name##_t *el_##el_name##_attach    \
-EVENT_LIST_FUNCTION_ATTRIBUTES(                         \
+event_list_node_##el_name##_t *                         \
+EVENT_LIST_FUNCTION_ATTRIBUTES                          \
+el_##el_name##_attach(                                  \
         event_list_##el_name##_t *list,                 \
         event_list_##el_name##_cb callback,             \
         void *data);                                    \
 EVENT_LIST_FUNCTION_MODIFIERS                           \
-void el_##el_name##_detach                              \
-EVENT_LIST_FUNCTION_ATTRIBUTES(                         \
+void EVENT_LIST_FUNCTION_ATTRIBUTES                     \
+el_##el_name##_detach(                                  \
         event_list_node_##el_name##_t *list);
 
 #define EVENT_LIST_DEFINE(el_name)                      \
 EVENT_LIST_FUNCTION_MODIFIERS                           \
-event_list_node_##el_name##_t *el_##el_name##_attach    \
-EVENT_LIST_FUNCTION_ATTRIBUTES(                         \
+event_list_node_##el_name##_t *                         \
+EVENT_LIST_FUNCTION_ATTRIBUTES                          \
+el_##el_name##_attach(                                  \
         event_list_##el_name##_t *list,                 \
         event_list_##el_name##_cb callback,             \
         void *data) {                                   \
@@ -69,8 +71,8 @@ EVENT_LIST_FUNCTION_ATTRIBUTES(                         \
     return node;                                        \
 }                                                       \
 EVENT_LIST_FUNCTION_MODIFIERS                           \
-void el_##el_name##_detach                              \
-EVENT_LIST_FUNCTION_ATTRIBUTES(                         \
+void EVENT_LIST_FUNCTION_ATTRIBUTES                     \
+el_##el_name##_detach(                                  \
         event_list_node_##el_name##_t *node) {          \
     if (!node)                                          \
         return;                                         \
